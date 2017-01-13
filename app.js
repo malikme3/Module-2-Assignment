@@ -17,10 +17,17 @@
         var index = "";
         var name = "";
         var quantity = "";
+        buyCtrl.buyList = [];
+        buyCtrl.isEveryThingBought = false;
         buyCtrl.checked = function(index, name, quantity) {
             ShoppingListCheckOffService.addBoughtItem(index, name, quantity);
             buyCtrl.boughtFlag = true;
             ShoppingListCheckOffService.removedCheckedItem(index);
+            if (buyCtrl.buyList.length > 0) {
+                buyCtrl.isEveryThingBought = false;
+            } else {
+                buyCtrl.isEveryThingBought = true;
+            };
 
         }
 
@@ -95,7 +102,7 @@
 
 
         checkServ.getBoughtItem = function() {
-          console.table(boughtItems);
+            console.table(boughtItems);
             return boughtItems;
         };
 
