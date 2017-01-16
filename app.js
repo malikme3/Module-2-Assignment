@@ -12,6 +12,9 @@
     function ToBuyController(ShoppingListCheckOffService) {
         var toBuyController = this;
         toBuyController.items = ShoppingListCheckOffService.getToBuyItems();
+        toBuyController.allBought = function() {
+            return ShoppingListCheckOffService.getAllBought();
+        }
         toBuyController.checkOut = function() {
             ShoppingListCheckOffService.checkOut();
         };
@@ -31,6 +34,7 @@
     function ShoppingListCheckOffService() {
         var service = this;
         var boughtItems = [];
+        var allBought = false;
         var toBuyItems =
 
             [{
@@ -76,12 +80,26 @@
             return toBuyItems;
         };
 
+        service.getAllBought = function() {
+
+            angular.forEach(toBuyItems, function(item) {
+                if (item.itemMessage == 'Item is Checked out') {
+                    allBought = true;
+                } else {
+                    allBought = false;
+                }
+
+            });
+            return allBought;
+        };
+
+
         service.getBoughtItems = function() {
             return boughtItems;
         };
 
         service.checkOff = function(index, name, quantity) {
-          
+
             var obj = {
                 name: name,
                 quantity: quantity,
@@ -97,9 +115,9 @@
                 if (item.checkedFlag) {
 
                     var index = toBuyItems.findIndex(x => x.name == item.name);
-                    if(toBuyItems[index].name !=''){
-                    boughtItems.push(toBuyItems[index]);
-                  }
+                    if (toBuyItems[index].name != '') {
+                        boughtItems.push(toBuyItems[index]);
+                    }
                     //indexArray.push(index);
                     var obj2 = {
                         name: "",
@@ -107,9 +125,13 @@
                         checkedFlag: true,
                         itemMessage: "Item is Checked out"
                     };
+
                     toBuyItems.splice(index, 1, obj2);
 
+
                 }
+
+
             });
         };
     }

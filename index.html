@@ -42,7 +42,9 @@
                     <li ng-repeat="item in toBuyList.items"><span ng-if="item.itemMessage != 'Item is Checked out'">Buy {{item.quantity}} {{item.name}}</span> <button class="btn btn-default" ng-click="toBuyList.checkOff($index,item.name ,item.quantity);"><span ng-if="item.checkedFlag && item.itemMessage != 'Item is Checked out'" class="glyphicon glyphicon-ok"></span> <span ng-if="item.itemMessage == 'Item is Checked out'" class="glyphicon glyphicon-check"></span> {{item.itemMessage}}</button></li>
                 </ul>
                 <button class="btn btn-default" ng-click="toBuyList.checkOut();"> Check out here !!! </button>
-                <div class="emptyMessage" ng-if="toBuyList.items.length === 0">Everything is bought!</div>
+                <span item in toBuyList.items.name>
+                <div class="emptyMessage" ng-if="toBuyList.allBought()">Everything is bought!</div>
+                <span>
             </div>
 
             <!-- Already Bought List -->
