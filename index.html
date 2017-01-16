@@ -29,35 +29,32 @@
     </style>
 </head>
 
-<body ng-app="ShoppingListCheckOff">
+<body ng-app="ShoppingListApp">
     <div class="container">
         <h1>Shopping List Check Off</h1>
 
         <div class="row">
 
             <!-- To Buy List -->
-            <div class="col-md-6" ng-controller="ToBuyController as ctrl">
+            <div class="col-md-6" ng-controller="ShoppingListController as ctrl">
                 <h2>To Buy:</h2>
-                <ul ng-repeat="item in ctrl.buyList">
-                    <!-- <li>Buy 10 cookies <button class="btn btn-default"><span class="glyphicon glyphicon-ok"></span> Bought</button></li>
-                    <li>Buy 10 cookies <button class="btn btn-default"><span class="glyphicon glyphicon-ok"></span> Bought</button></li> -->
-                    <li> Buy {{item.quantity}} {{item.name}} for price {{item.price | currency}} <button ng-click="ctrl.checked($index,item.name ,item.quantity)" class="btn btn-default"> {{ctrl.message}}</button> </li>
+                <ul ng-repeat="item in ctrl.items">
+
+                    <li> Buy {{item.itemQuantity}} {{item.itemName}} <button ng-click="ctrl.removeItem($index,item.itemQuantity,item.itemName)" class="btn btn-default"> <span ng-if="item.checkedFlag" class="glyphicon glyphicon-ok"></span>{{item.itemMessage}}</button>                        </li>
                 </ul>
-                <div class="emptyMessage" ng-if="ctrl.isEveryThingBought">Everything is bought! {{ctrl.name}}</div>
+                <button class="btn btn-default" ng-click="ctrl.isAllBought()" ng-if="!ctrl.isAllBoughtFlag"> Please check out !!!</button>
+                <div class="emptyMessage" ng-if="ctrl.isAllBoughtFlag">Everything is bought! {{ctrl.name}}</div>
             </div>
 
             <!-- Already Bought List -->
             <div class="col-md-6">
-                <h2>Already Bought:</h2>
-                <div ng-controller="ALreadyBoughtController as ctrl">
-                    <ul ng-repeat="item in ctrl.boughtList">
-                        <li>{{item.name}} and {{item.quantity}} </li>
+                <h2>Bought List</h2>
+                <div ng-controller="BoughtListController as ctrl">
+                    <ul ng-repeat="item in ctrl.items">
+                        <li ng-if="item.itemName !=''">{{item.itemName}} and {{item.itemQuantity}} </li>
                     </ul>
                 </div>
-                <div class="emptyMessage" ng-controller="ToBuyController as ctrl">
-                    <span ng-if="ctrl.boughtFlag==true">Nothing bought yet.</span>
 
-                </div>
             </div>
         </div>
     </div>
