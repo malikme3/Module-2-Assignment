@@ -2,180 +2,115 @@
     'use strict';
 
     angular.module('ShoppingListApp', [])
-        .controller('ShoppingListController', ShoppingListController)
-        .controller('BoughtListController', BoughtListController)
-        .provider('ShoppingListService', ShoppingListServiceProvider)
-        .config(Config);
+        .controller('BuyController', ToBuyController)
+        .controller('BoughtController', AlreadyBoughtController)
+        .service('ShoppingListCheckOffService', ShoppingListCheckOffService);
 
-    Config.$inject = ['ShoppingListServiceProvider'];
 
-    function Config(ShoppingListServiceProvider) {
-        // Save Yaakov from himself
-        ShoppingListServiceProvider.defaults.maxItems = 2;
+    ToBuyController.$inject = ['ShoppingListCheckOffService'];
+
+    function ToBuyController(ShoppingListCheckOffService) {
+        var toBuyController = this;
+        toBuyController.items = ShoppingListCheckOffService.getToBuyItems();
+        toBuyController.checkOut = function() {
+            ShoppingListCheckOffService.checkOut();
+        };
+
+        toBuyController.checkOff = function(index, name, quantity) {
+            ShoppingListCheckOffService.checkOff(index, name, quantity);
+        }
     }
 
+    AlreadyBoughtController.$inject = ['ShoppingListCheckOffService'];
 
-    ShoppingListController.$inject = ['ShoppingListService'];
+    function AlreadyBoughtController(ShoppingListCheckOffService) {
+        var alreadyBoughtController = this;
+        alreadyBoughtController.items = ShoppingListCheckOffService.getBoughtItems();
+    }
 
-    function ShoppingListController(ShoppingListService) {
-        var list = this;
-        list.isAllBoughtFlag = false
-
-        list.items = ShoppingListService.getItems();
-
-        list.itemName = "";
-        list.itemQuantity = "";
-
-        list.addItem = function() {
-            try {
-                ShoppingListService.addItem(list.itemName, list.itemQuantity);
-            } catch (error) {
-                list.errorMessage = error.message;
-            }
-        };
-
-        list.removeItem = function(itemIndex, itemQuantity, itemName) {
-            ShoppingListService.removeItem(itemIndex, itemQuantity, itemName);
-        };
-
-        list.isAllBought = function() {
-            var isAllBought = ShoppingListService.isEveryThingBought();
-            if(isAllBought){
-              list.isAllBoughtFlag = true;
-            } else {
-              list.isAllBoughtFlag = false;
-            }
-        };
-    };
-
-    BoughtListController.$inject = ['ShoppingListService'];
-
-    function BoughtListController(ShoppingListService) {
-        var Boughtlist = this;
-        Boughtlist.nothingBought = true;
-
-        Boughtlist.items = ShoppingListService.getBoughtItems();
-
-Boughtlist.boughtCheck = function (){
-  if (Boughtlist.items.length >1) {
-    Boughtlist.nothingBought = true;
-  } else {
-    Boughtlist.nothingBought = true;
-  }
-};
-    };
-
-    function ShoppingListService(maxItems) {
+    function ShoppingListCheckOffService() {
         var service = this;
         var boughtItems = [];
-        var  isAllBought = false;
+        var toBuyItems =
 
-        var items = [{
-                itemName: "laptop",
-                itemQuantity: "10",
-                checkedFlag: false,
-                itemMessage: "Please click to buy Item"
+            [{
+                    name: "laptop",
+                    quantity: "10",
+                    checkedFlag: false,
+                    itemMessage: "Please click to buy Item"
 
-            },
-            {
-                itemName: "Cell Phone",
-                itemQuantity: "10",
-                checkedFlag: false,
-                itemMessage: "Please click to buy Item"
-            },
-            {
-                itemName: "Ipad",
-                itemQuantity: "5",
-                checkedFlag: false,
-                itemMessage: "Please click to buy Item"
-            },
-            {
-                itemName: "Tablet",
-                itemQuantity: "20",
-                checkedFlag: false,
-                itemMessage: "Please click to buy Item"
-            },
-            {
-                itemName: "Ipode",
-                itemQuantity: "15",
-                checkedFlag: false,
-                itemMessage: "Please click to buy Item"
-            },
-            {
-                itemName: "Kindle",
-                itemQuantity: "2",
-                checkedFlag: false,
-                itemMessage: "Please click to buy Item"
-            }
-        ];
-        var boughtItems = [{
-            itemName: "",
-            itemQuantity: "",
-            boughtFlag: false,
-        }];
+                },
+                {
+                    name: "Cell Phone",
+                    quantity: "10",
+                    checkedFlag: false,
+                    itemMessage: "Please click to buy Item"
+                },
+                {
+                    name: "Ipad",
+                    quantity: "5",
+                    checkedFlag: false,
+                    itemMessage: "Please click to buy Item"
+                },
+                {
+                    name: "Tablet",
+                    quantity: "20",
+                    checkedFlag: false,
+                    itemMessage: "Please click to buy Item"
+                },
+                {
+                    name: "Ipode",
+                    quantity: "15",
+                    checkedFlag: false,
+                    itemMessage: "Please click to buy Item"
+                },
+                {
+                    name: "Kindle",
+                    quantity: "2",
+                    checkedFlag: false,
+                    itemMessage: "Please click to buy Item"
+                }
+            ];
 
-        service.addBoughtItems = function(itemName, quantity) {
-            if ((maxItems === undefined) ||
-                (maxItems !== undefined) || (items.length < maxItems)) {
-                var item = {
-                    itemName: itemName,
-                    itemQuantity: quantity,
-                    boughtFlag: true
-                };
-                boughtItems.push(item);
-            } else {
-                throw new Error("Max items (" + maxItems + ") reached.");
-            }
-        };
-
-
-        service.getItems = function() {
-
-            return items;
-        };
-
-        service.isEveryThingBought = function() {
-
-            angular.forEach(items, function(item) {
-                if (item.itemMessage == 'Please click to buy Item') {
-                    isAllBought = false;
-                } else {
-                    isAllBought = true;
-                };
-
-            });
-            return isAllBought;
+        service.getToBuyItems = function() {
+            return toBuyItems;
         };
 
         service.getBoughtItems = function() {
             return boughtItems;
         };
 
-        service.removeItem = function(itemIndex, itemQuantity, itemName) {
-            service.addBoughtItems(itemQuantity, itemName);
+        service.checkOff = function(index, name, quantity) {
+          
             var obj = {
-                itemName: itemName,
-                itemQuantity: itemQuantity,
+                name: name,
+                quantity: quantity,
                 checkedFlag: true,
                 itemMessage: "Item is Checked"
             };
-            items.splice(itemIndex, 1, obj);
+            toBuyItems.splice(index, 1, obj);
         };
 
-    }
+        service.checkOut = function() {
 
+            angular.forEach(toBuyItems, function(item) {
+                if (item.checkedFlag) {
 
-    function ShoppingListServiceProvider() {
-        var provider = this;
+                    var index = toBuyItems.findIndex(x => x.name == item.name);
+                    if(toBuyItems[index].name !=''){
+                    boughtItems.push(toBuyItems[index]);
+                  }
+                    //indexArray.push(index);
+                    var obj2 = {
+                        name: "",
+                        quantity: "",
+                        checkedFlag: true,
+                        itemMessage: "Item is Checked out"
+                    };
+                    toBuyItems.splice(index, 1, obj2);
 
-        provider.defaults = {
-            maxItems: 10
-        };
-
-        provider.$get = function() {
-            var shoppingList = new ShoppingListService(provider.defaults.maxItems);
-
-            return shoppingList;
+                }
+            });
         };
     }
 
