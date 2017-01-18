@@ -2,39 +2,32 @@
     'use strict';
 
     angular.module('ShoppingListApp', [])
-        .controller('BuyController', ToBuyController)
-        .controller('BoughtController', AlreadyBoughtController)
-        .service('ShoppingListCheckOffService', ShoppingListCheckOffService);
+        .controller('ToBuyListController', ToBuyListController)
+        .controller('AlreadyBoughtController', AlreadyBoughtController)
+        .service('ShoppingListService', ShoppingListService);
 
 
-    ToBuyController.$inject = ['ShoppingListCheckOffService'];
+    ToBuyListController.$inject = ['ShoppingListService'];
 
-    function ToBuyController(ShoppingListCheckOffService) {
-        var toBuyController = this;
-        toBuyController.items = ShoppingListCheckOffService.getToBuyItems();
-        toBuyController.allBought = function() {
-            return ShoppingListCheckOffService.getAllBought();
-        }
-        toBuyController.checkOut = function() {
-            ShoppingListCheckOffService.checkOut();
-        };
+    function ToBuyListController(ShoppingListService) {
+        var ToBuyListController = this;
+        ToBuyListController.items = ShoppingListService.getToBuyItems();
 
-        toBuyController.checkOff = function(index, name, quantity) {
-            ShoppingListCheckOffService.checkOff(index, name, quantity);
+        ToBuyListController.checkOff = function(index) {
+            ShoppingListService.checkOff(index);
         }
     }
 
-    AlreadyBoughtController.$inject = ['ShoppingListCheckOffService'];
+    AlreadyBoughtController.$inject = ['ShoppingListService'];
 
-    function AlreadyBoughtController(ShoppingListCheckOffService) {
-        var alreadyBoughtController = this;
-        alreadyBoughtController.items = ShoppingListCheckOffService.getBoughtItems();
+    function AlreadyBoughtController(ShoppingListService) {
+        var alreadyBoughtCtrl = this;
+        alreadyBoughtCtrl.items = ShoppingListService.getBoughtItems();
     }
 
-    function ShoppingListCheckOffService() {
+    function ShoppingListService() {
         var service = this;
         var boughtItems = [];
-        var allBought = false;
         var toBuyItems =
 
             [{
@@ -80,59 +73,13 @@
             return toBuyItems;
         };
 
-        service.getAllBought = function() {
-
-            angular.forEach(toBuyItems, function(item) {
-                if (item.itemMessage == 'Item is Checked out') {
-                    allBought = true;
-                } else {
-                    allBought = false;
-                }
-
-            });
-            return allBought;
-        };
-
-
         service.getBoughtItems = function() {
             return boughtItems;
         };
 
-        service.checkOff = function(index, name, quantity) {
-
-            var obj = {
-                name: name,
-                quantity: quantity,
-                checkedFlag: true,
-                itemMessage: "Item is Checked"
-            };
-            toBuyItems.splice(index, 1, obj);
-        };
-
-        service.checkOut = function() {
-
-            angular.forEach(toBuyItems, function(item) {
-                if (item.checkedFlag) {
-
-                    var index = toBuyItems.findIndex(x => x.name == item.name);
-                    if (toBuyItems[index].name != '') {
-                        boughtItems.push(toBuyItems[index]);
-                    }
-                    //indexArray.push(index);
-                    var obj2 = {
-                        name: "",
-                        quantity: "",
-                        checkedFlag: true,
-                        itemMessage: "Item is Checked out"
-                    };
-
-                    toBuyItems.splice(index, 1, obj2);
-
-
-                }
-
-
-            });
+        service.checkOff = function(index) {
+            boughtItems.push(toBuyItems[index]);
+            toBuyItems.splice(index, 1);
         };
     }
 

@@ -36,19 +36,15 @@
         <div class="row">
 
             <!-- To Buy List -->
-            <div class="col-md-6" ng-controller="BuyController as toBuyList">
+            <div class="col-md-6" ng-controller="ToBuyListController as ctrl">
                 <h2>To Buy:</h2>
-                <ul>
-                    <li ng-repeat="item in toBuyList.items"><span ng-if="item.itemMessage != 'Item is Checked out'">Buy {{item.quantity}} {{item.name}}</span> <button class="btn btn-default" ng-click="toBuyList.checkOff($index,item.name ,item.quantity);"><span ng-if="item.checkedFlag && item.itemMessage != 'Item is Checked out'" class="glyphicon glyphicon-ok"></span> <span ng-if="item.itemMessage == 'Item is Checked out'" class="glyphicon glyphicon-check"></span> {{item.itemMessage}}</button></li>
+                <ul ng-repeat="item in ctrl.items">
+                    <li> Buy {{item.quantity}} {{item.name}} <button ng-click="ctrl.checkOff($index)" class="btn btn-default"> {{ctrl.message}}<span class="glyphicon glyphicon-ok"></span> Bought</button></li>
                 </ul>
-                <button class="btn btn-default" ng-click="toBuyList.checkOut();"> Check out here !!! </button>
-                <span item in toBuyList.items.name>
-                <div class="emptyMessage" ng-if="toBuyList.allBought()">Everything is bought!</div>
-                <span>
+                <div class="emptyMessage" ng-if="ctrl.items.length === 0">Everything is bought!</div>
             </div>
-
             <!-- Already Bought List -->
-            <div class="col-md-6" ng-controller="BoughtController as boughtList">
+            <div class="col-md-6" ng-controller="AlreadyBoughtController as boughtList">
                 <h2>Already Bought:</h2>
                 <ul>
                     <li ng-repeat="item in boughtList.items">Bought {{item.quantity}} {{item.name}}</li>
